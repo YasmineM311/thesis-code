@@ -1,1 +1,1 @@
-This repo is to maintain and track all thsis relevant code
+This repo is to maintain and track all thesis relevant code
