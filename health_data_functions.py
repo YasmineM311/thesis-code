@@ -72,8 +72,8 @@ def extract_heart_rate(df):
 def fetch_data_from_file(file_name):
     '''
     Extracts relevant metrics from JSON file
-    containing health data and combines extracted
-    data into a csv file'''
+    containing health data, and combines them into 
+    a data frame'''
 
     # reading data from file
     health_data = pd.read_json(file_name)
