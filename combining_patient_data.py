@@ -17,12 +17,12 @@ for i in range(1,len(file_list)+1):
 # creating a dictionary to store the dataframe corresponding to each file 
 dataframe_dict = {}
 
-for name in filenames:
-    for file in file_list:
-        dataframe_dict[name] = fetch_data_from_file(file)
+for i in range(len(file_list)):
+    name = filenames[i]
+    dataframe_dict[name] = fetch_data_from_file(file_list[i])
 
-#for i in dataframe_dict.values():
- #   print(i.head())
- # 
 
-print('done')
+for i in dataframe_dict.values():
+    print(i.head()) 
+
+#print('done')
