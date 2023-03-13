@@ -90,7 +90,9 @@ def fetch_data_from_file(file_name):
     active_energy = extract_metric(df, 'active_energy')
     respiratory_rate = extract_metric(df, 'respiratory_rate')
     step_count = extract_metric(df, 'step_count')
+    blood_oxygen = extract_metric(df, 'blood_oxygen_saturation')
     heart_rate = extract_heart_rate(df)
+    
 
     # define a list that contains the names of all metrics
     metrics = [heart_rate, heart_rate_var, active_energy, respiratory_rate, step_count]
