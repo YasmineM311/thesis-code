@@ -21,8 +21,12 @@ for i in range(len(file_list)):
     name = filenames[i]
     dataframe_dict[name] = fetch_data_from_file(file_list[i])
 
+dataframe_list = []
+for df in dataframe_dict.values():
+    dataframe_list.append(df)
 
-for i in dataframe_dict.values():
-    print(i.head()) 
+full_df = pd.concat(dataframe_list)
+full_df.to_csv('full_df.csv')
 
-#print('done')
+print('done')
+
