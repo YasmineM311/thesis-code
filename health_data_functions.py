@@ -95,7 +95,7 @@ def fetch_data_from_file(file_name):
     
 
     # define a list that contains the names of all metrics
-    metrics = [heart_rate, heart_rate_var, active_energy, respiratory_rate, step_count]
+    metrics = [heart_rate, heart_rate_var, active_energy, respiratory_rate, step_count, blood_oxygen]
 
     # combine all metrics into a data frame
     all_metrics = pd.DataFrame().join(metrics, how="outer")
