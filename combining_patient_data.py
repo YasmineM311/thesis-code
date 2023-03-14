@@ -17,16 +17,18 @@ for i in range(1,len(file_list)+1):
 # creating a dictionary to store the dataframe corresponding to each file 
 dataframe_dict = {}
 
-for i in range(len(file_list)):
+for i in range(1, len(file_list)):
     name = filenames[i]
     dataframe_dict[name] = fetch_data_from_file(file_list[i])
 
-dataframe_list = []
-for df in dataframe_dict.values():
-    dataframe_list.append(df)
+#dataframe_list = []
+#for df in dataframe_dict.values():
+#    dataframe_list.append(df)
+
+dataframe_list = list(dataframe_dict.values())
 
 full_df = pd.concat(dataframe_list)
-full_df.to_csv('full_df.csv')
+full_df.to_csv('full_df1.csv')
 
 print('done')
 
