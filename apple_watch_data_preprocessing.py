@@ -102,6 +102,8 @@ def create_day_and_time_columns(df):
     df['day'] = df['timestamp'].dt.strftime('%d-%m-%Y')
     df['time'] = df['timestamp'].dt.strftime('%H:%M')
 
+    return df
+
 
 # This function stacks the previous functions and performs the following:
 # 1-flattens json data from json file
