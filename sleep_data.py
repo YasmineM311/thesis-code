@@ -12,7 +12,7 @@ sleep_data_dict = {}
 
 for i, file in enumerate(file_list):
     df = pd.DataFrame(transform(pd.read_json(file)))
-    sleep = df[df.name=='sleep_analysis'][['date', 'sleepStart', 'sleepEnd', 'inBedStart', 'inBedEnd', 'inBed']]
+    sleep = df[df.name=='sleep_analysis'][['date', 'sleepStart', 'sleepEnd', 'rem', 'core', 'deep']]
     sleep_data_dict[i] = sleep
 
 # converting the dict into a list to concatenate its components into a dataframe
