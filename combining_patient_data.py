@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from health_data_functions import *
+from apple_watch_data_preprocessing import *
 
 ## make sure you are pointing to the correct directory and that only has json files ##
 
