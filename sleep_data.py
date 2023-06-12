@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 import os
-from apple_watch_data_preprocessing import *
+from apple_watch_data_extraction import *
 
 ## make sure you are in the correct directory
 

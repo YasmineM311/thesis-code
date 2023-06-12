@@ -78,11 +78,9 @@ def extract_heart_rate(df):
 # The following function extracts and creates new columns for
 # day and time information from the timestamp to facilitate 
 # joining with other data sources based on these two columns
-def create_day_and_time_columns(df):
+def modify_timestamp(df):
     '''
-    A function to create two new columns "day" and "time"
-    extracted from the timestamp to serve as a basis for 
-    joining all data sources together
+    A function to remove timezone from the timestamp and set in as an index.
     '''
     # subfunction to remove timezone information from timestamp
     def remove_timezone(dt):   
@@ -97,10 +95,7 @@ def create_day_and_time_columns(df):
     # set to TRUE and that would mess up our timestamp 
     # hence we resort to the apply function
     df['timestamp'] = df['timestamp'].apply(remove_timezone)
-
-    # now creating the new columns 'day' and 'time'
-    df['day'] = df['timestamp'].dt.strftime('%d-%m-%Y')
-    df['time'] = df['timestamp'].dt.strftime('%H:%M')
+    df.set_index('timestamp', inplace=True)
 
     return df
 
@@ -153,8 +148,39 @@ def fetch_data_from_file(file_name):
     all_metrics_imputed = all_metrics_df.fillna(0)
 
     # create 'day' and 'time' columns
-    final_df = create_day_and_time_columns(all_metrics_imputed)
+    final_df = modify_timestamp(all_metrics_imputed)
 
     return final_df
 
 
+#define a function to fill in gaps in the timestamp column
+def fill_timestamp_gaps(df):
+    '''
+    creates a dataframe consisting of minutely timestamps spanning 
+    the timeframe of the passed dataframe.
+    this dataframe is then used to fill in the gaps in the timestamp
+    column of the passed dataframe.
+    returns a dataframe without gaps in the timestamp.
+    '''
+    # defining the first date in the dataset
+    start = pd.to_datetime(str(df.index.min()))
+    
+    # defining the last date in the dataset
+    end = pd.to_datetime(str(df.index.max()))
+    
+    # creating a list of timestamps from start to end separated by 1 minute
+    dates = pd.date_range(start=start, end=end, freq='1Min')
+    
+    # turning it into a dataframe to merge with with the passed dataframe
+    dates_df = pd.DataFrame(dates, columns=['timestamp'])
+    
+    # coercing the data type to be of datetime
+    dates_df['timestamp'] = pd.to_datetime(dates_df['timestamp'])
+    
+    # filling the gaps in the passed dataframe
+    df_filled = pd.merge_ordered(dates_df, df, on='timestamp')
+    
+    # set the timestamp to be the index
+    df_filled.set_index('timestamp', inplace=True)
+ 
+    return df_filled

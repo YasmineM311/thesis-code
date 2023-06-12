@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from datetime import datetime, timezone
-from apple_watch_data_preprocessing import *
+from apple_watch_data_extraction import *
 
 ## make sure you are pointing to the correct directory and that only has json files ##
 

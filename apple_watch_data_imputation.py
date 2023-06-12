@@ -1,3 +1,4 @@
+import pandas as pd
 import numpy as np
 from sklearn.impute import KNNImputer
 
@@ -78,7 +79,7 @@ def impute_applewatch_data(df):
     # Create a boolean mask for sleep values only
     night_mask = (df['sleep'] == 1)
     
-    #initiate a column for inerpolated rr
+    # initiate a column for inerpolated rr
     df['rr_intrapolated'] = np.NaN
     df['bl_oxygen_interpolated'] = np.NaN
 
