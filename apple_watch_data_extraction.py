@@ -144,11 +144,8 @@ def fetch_data_from_file(file_name):
     # sort data by date in ascending order
     all_metrics_df.sort_values(by='date', ascending = True, inplace = True)
 
-    # replace NaNs with zeroes
-    all_metrics_imputed = all_metrics_df.fillna(0)
-
-    # create 'day' and 'time' columns
-    final_df = modify_timestamp(all_metrics_imputed)
+    # adjust timestamp
+    final_df = modify_timestamp(all_metrics_df)
 
     return final_df
 
