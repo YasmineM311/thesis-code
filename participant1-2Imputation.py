@@ -4,6 +4,8 @@ import numpy as np
 import os
 from datetime import datetime, timezone
 from sklearn.impute import KNNImputer
+from pyod.models.ecod import ECOD
+
 
 # custom functions
 from apple_watch_data_extraction import *

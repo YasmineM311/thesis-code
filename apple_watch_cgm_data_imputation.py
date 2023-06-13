@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.impute import KNNImputer
+from pyod.models.ecod import ECOD
+
 
 def impute_applewatch_data(df):
     '''
@@ -29,8 +31,15 @@ def impute_applewatch_data(df):
     df['heart_rate'] = df['heart_rate'].round()
 
     # 2. Detect outliers and replace them with NaNs
-    outliers = list(df.heart_rate.value_counts()[df.heart_rate.value_counts() == 1].index)
-    df['heart_rate'] = np.where(df['heart_rate'].isin(outliers), np.NaN, df['heart_rate'])
+    Y = np.array(df.heart_rate[df.heart_rate > 0])
+    Y = Y.reshape(-1, 1)
+    clf = ECOD(contamination=0.001)
+    clf.fit(Y)
+    outliers = clf.predict(Y)
+    outlier_list = Y[np.where(outliers==1)]
+    outlier_list = np.concatenate(outlier_list).ravel().tolist()
+
+    df['heart_rate'] = np.where(df['heart_rate'].isin(outlier_list), np.NaN, df['heart_rate'])
 
     # then we interpolate making sure to mask any entries preceeded by more than 20 NaNs from being imputed:
     # 1. Determine the number of consecutive NaNs in each column
@@ -59,10 +68,10 @@ def impute_applewatch_data(df):
     #####################################################################################################################
     ## Heart Rate Variability
     # subsetting the metrics that we want to use for imputation
-    hrv_impute_df = df[['heart_rate_interpolated', 'steps_imputed', 'active_energy', 'sleep', 'heart_rate_variability']]
+    hrv_impute_df = df[['heart_rate_interpolated', 'heart_rate_variability']]
     
     # initiating the KNN imputer 
-    imputer = KNNImputer(n_neighbors=3)
+    imputer = KNNImputer(n_neighbors=5)
     imputed_values = imputer.fit_transform(hrv_impute_df)
 
     # subsetting hrv imputed values
@@ -96,5 +105,5 @@ def impute_applewatch_data(df):
 # backward filling of cgm data
 
 def cgm_data_backward_fill(df):
-    df['glucose_imputed'] = df['glucose'].fillna(method='bfill',limit=10) # we set the limit to 10 to avoid imputing when there are gaps in the data
+    df['glucose_imputed'] = df['glucose'].fillna(method='bfill',limit=20) # we set the limit to 10 to avoid imputing when there are gaps in the data
     return df

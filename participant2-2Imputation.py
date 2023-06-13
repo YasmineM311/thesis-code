@@ -4,6 +4,8 @@ import numpy as np
 import os
 from datetime import datetime, timezone
 from sklearn.impute import KNNImputer
+from pyod.models.ecod import ECOD
+
 
 # custom functions
 from apple_watch_data_extraction import *
@@ -31,7 +33,7 @@ df_imputed1 = impute_applewatch_data(df_joined)
 # imputing cgm data
 df_imputed2 = cgm_data_backward_fill(df_imputed1)
 
-df_imputed2.to_csv('P1_imputed_data.csv')
+df_imputed2.to_csv('P2_imputed_data.csv')
 
 print('imputed data saved sucessfully')
 ##################################################################################################################################
