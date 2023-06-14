@@ -37,8 +37,11 @@ def impute_applewatch_data(df):
     clf.fit(Y)
     outliers = clf.predict(Y)
     outlier_list = Y[np.where(outliers==1)]
-    outlier_list = np.concatenate(outlier_list).ravel().tolist()
-
+    if len(outlier_list) > 0:
+        outlier_list = np.concatenate(outlier_list).ravel().tolist()
+    else:
+        outlier_list = []
+    
     df['heart_rate'] = np.where(df['heart_rate'].isin(outlier_list), np.NaN, df['heart_rate'])
 
     # then we interpolate making sure to mask any entries preceeded by more than 20 NaNs from being imputed:
@@ -67,8 +70,11 @@ def impute_applewatch_data(df):
     
     #####################################################################################################################
     ## Heart Rate Variability
+    # creating a rolling average for hrv
+    df['hrv_rolling_15'] = df['heart_rate_variability'].rolling(window=15, min_periods=1).apply(lambda x: x[x!= 0].mean())
+
     # subsetting the metrics that we want to use for imputation
-    hrv_impute_df = df[['heart_rate_interpolated', 'heart_rate_variability']]
+    hrv_impute_df = df[['heart_rate_interpolated', 'hrv_rolling_15']]
     
     # initiating the KNN imputer 
     imputer = KNNImputer(n_neighbors=5)
@@ -78,10 +84,10 @@ def impute_applewatch_data(df):
     hrv_imputed_values = imputed_values[:, -1]
     
     # assign the values to a new column
-    df['hrv_imputed'] = hrv_imputed_values.round()
+    df['hrv_rolling_15_imputed'] = hrv_imputed_values.round()
 
     # then we coerce empty rows to NaNs (watch was not worn by the participant)
-    df['hrv_imputed'] = df['hrv_imputed'].mask(mask, np.nan)
+    df['hrv_rolling_15_imputed'] = df['hrv_rolling_15_imputed'].mask(mask, np.nan)
 
     #####################################################################################################################
     ## Respiratory rate and blood oxygen saturation
@@ -105,5 +111,5 @@ def impute_applewatch_data(df):
 # backward filling of cgm data
 
 def cgm_data_backward_fill(df):
-    df['glucose_imputed'] = df['glucose'].fillna(method='bfill',limit=20) # we set the limit to 10 to avoid imputing when there are gaps in the data
+    df['glucose_imputed'] = df['glucose'].fillna(method='bfill')
     return df
