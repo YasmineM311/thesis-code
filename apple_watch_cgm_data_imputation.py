@@ -59,34 +59,48 @@ def impute_applewatch_data(df):
 
     #####################################################################################################################
     ## Step count
-    # fill NaNs with 0 for the step count column
+    # 1. fill NaNs with 0 for the step count column
     df['steps_imputed'] = df['step_count'].fillna(0).round()
 
-    # Create a boolean mask where other columns have NaN values (watch was not worn by the participant)
+    # 2. Create a boolean mask where other columns have NaN values (watch was not worn by the participant)
     mask = df[['heart_rate_interpolated', 'heart_rate_variability', 'step_count', 'active_energy']].isna().all(axis=1)
 
-    # then we coerce empty rows to NaNs
+    # 3. then we coerce empty rows to NaNs
     df['steps_imputed'] = df['steps_imputed'].mask(mask, np.nan) 
     
     #####################################################################################################################
     ## Heart Rate Variability
-    # creating a rolling average for hrv
+    # 1. Detect outliers and replace them with NaNs
+    Y = np.array(df.heart_rate_variability[df.heart_rate_variability > 0])
+    Y = Y.reshape(-1, 1)
+    clf = ECOD(contamination=0.005)
+    clf.fit(Y)
+    outliers = clf.predict(Y)
+    outlier_list = Y[np.where(outliers==1)]
+    if len(outlier_list) > 0:
+        outlier_list = np.concatenate(outlier_list).ravel().tolist()
+    else:
+        outlier_list = []
+    
+    df['heart_rate_variability'] = np.where(df['heart_rate_variability'].isin(outlier_list), np.NaN, df['heart_rate_variability'])
+    
+    # 2. creating a rolling average for hrv
     df['hrv_rolling_15'] = df['heart_rate_variability'].rolling(window=15, min_periods=1).apply(lambda x: x[x!= 0].mean())
 
-    # subsetting the metrics that we want to use for imputation
-    hrv_impute_df = df[['heart_rate_interpolated', 'hrv_rolling_15']]
+    # 3. subsetting the metrics that we want to use for imputation
+    hrv_impute_df = df[['heart_rate_interpolated', 'steps_imputed', 'hrv_rolling_15']]
     
-    # initiating the KNN imputer 
+    # 4. initiating the KNN imputer 
     imputer = KNNImputer(n_neighbors=5)
     imputed_values = imputer.fit_transform(hrv_impute_df)
 
-    # subsetting hrv imputed values
+    # 5. subsetting hrv imputed values
     hrv_imputed_values = imputed_values[:, -1]
     
-    # assign the values to a new column
+    # 6. assign the values to a new column
     df['hrv_rolling_15_imputed'] = hrv_imputed_values.round()
 
-    # then we coerce empty rows to NaNs (watch was not worn by the participant)
+    # 7. then we coerce empty rows to NaNs (watch was not worn by the participant)
     df['hrv_rolling_15_imputed'] = df['hrv_rolling_15_imputed'].mask(mask, np.nan)
 
     #####################################################################################################################
