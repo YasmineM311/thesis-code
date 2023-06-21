@@ -88,7 +88,7 @@ def impute_applewatch_data(df):
     df['hrv_rolling_15'] = df['heart_rate_variability'].rolling(window=15, min_periods=1).apply(lambda x: x[x!= 0].mean())
 
     # 3. subsetting the metrics that we want to use for imputation
-    hrv_impute_df = df[['heart_rate_interpolated', 'steps_imputed', 'hrv_rolling_15']]
+    hrv_impute_df = df[['heart_rate_interpolated', 'active_energy', 'hrv_rolling_15']]
     
     # 4. initiating the KNN imputer 
     imputer = KNNImputer(n_neighbors=5)
