@@ -40,6 +40,15 @@ df_full = pd.concat([df1, df2, df3], axis=0)
 # filling the gaps in the timestamp column
 df_full_no_gaps = fill_timestamp_gaps(df_full)
 
+# resampling 
+# heart rate, heart rate variability, respiratory rate and blood oxygen saturation --> mean
+#df = df_full_no_gaps.resample(rule='5T', offset='2T', label='right',).mean()
+
+# active energy and step count --> sum
+#df['active_energy_sum'] = df_full_no_gaps['active_energy'].resample(rule='5T', offset='2T', label='right').sum()
+#df['step_count_sum'] = df_full_no_gaps['step_count'].resample(rule='5T', offset='2T', label='right',).sum()
+
+
 #print(df_full_no_gaps.shape)
 ##################################################################################################################################
 
@@ -48,11 +57,13 @@ cgm_df = cgm_preprocess('LUZ 01 Dexcom Daten.csv')
 ##################################################################################################################################
 
 # loading manual diary data 
-diary_df = preprocess_diary('LUZ01_Protokoll.xlsx')
+#diary_df = preprocess_diary('LUZ01_Protokoll.xlsx')
 ##################################################################################################################################
 
 # joining data sources
-df_joined = join_data_sources(df_full_no_gaps, cgm_df, diary_df)
+#df_joined = join_data_sources(df, cgm_df)
+df_joined = join_data_sources(df_full_no_gaps, cgm_df)
+#df_joined = join_data_sources(df_full_no_gaps, cgm_df, diary_df)
 ##################################################################################################################################
 
 # specifying sleep timeframes to create a binary 'sleep' column
@@ -80,7 +91,8 @@ df_joined.set_index('timestamp', inplace=True)
 df_joined = pd.DataFrame(df_joined[df_joined.index > start_date])
 
 # saving the results
-df_joined.to_csv('P1_watch_cgm_diary.csv')
+#df_joined.to_csv('P1_watch_cgm_diary.csv')
+df_joined.to_csv('P1_watch_cgm_no_resampling.csv')
 
 #print(df_joined.head(10))  
 print('joined data saved sucessfully')

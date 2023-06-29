@@ -48,11 +48,13 @@ cgm_df = cgm_preprocess('LUZ 02 Dexcom Daten.csv')
 ##################################################################################################################################
 
 # loading manual diary data 
-diary_df = preprocess_diary('LUZ02_protokoll.xlsx')
+#diary_df = preprocess_diary('LUZ02_protokoll.xlsx')
 ##################################################################################################################################
 
 # joining data sources
-df_joined = join_data_sources(df_full_no_gaps, cgm_df, diary_df)
+#df_joined = join_data_sources(df_full_no_gaps, cgm_df, diary_df)
+df_joined = join_data_sources(df_full_no_gaps, cgm_df)
+
 ##################################################################################################################################
 
 # specifying sleep timeframes to create a binary 'sleep' column
@@ -82,7 +84,8 @@ df_joined.set_index('timestamp', inplace=True)
 df_joined = pd.DataFrame(df_joined[df_joined.index > start_date])
 
 # saving the results
-df_joined.to_csv('P2_watch_cgm_diary.csv')
+#df_joined.to_csv('P2_watch_cgm_diary.csv')
+df_joined.to_csv('P2_watch_cgm.csv')
 
 #print(df_joined.head(10))  
 print('joined data saved sucessfully')

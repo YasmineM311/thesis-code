@@ -25,15 +25,20 @@ os.chdir(path)
 ##################################################################################################################################
 
 # load merged data
-df_joined = pd.read_csv('P1_watch_cgm_diary_sleep_corrected.csv', index_col='timestamp') 
+#df_joined = pd.read_csv('P1_watch_cgm_diary_sleep_corrected.csv', index_col='timestamp') 
+df_joined = pd.read_csv('P1_watch_cgm_sleep_corrected.csv') 
+df_joined['timestamp'] = pd.to_datetime(df_joined['timestamp'])
+df_joined.set_index('timestamp', inplace=True)
 
 # imputing apple watch data
 df_imputed1 = impute_applewatch_data(df_joined)
 
 # imputing cgm data
-df_imputed2 = cgm_data_backward_fill(df_imputed1)
+#df_imputed2 = cgm_data_backward_fill(df_imputed1)
 
-df_imputed2.to_csv('P1_imputed_data.csv')
+#df_imputed2.to_csv('P1_imputed_data2.csv')
+df_imputed1.to_csv('P1_imputed_data3.csv')
+
 
 print('imputed data saved sucessfully')
 ##################################################################################################################################
