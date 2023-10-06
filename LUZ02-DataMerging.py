@@ -85,7 +85,7 @@ df_joined = pd.DataFrame(df_joined[df_joined.index > start_date])
 
 # saving the results
 #df_joined.to_csv('P2_watch_cgm_diary.csv')
-df_joined.to_csv('P2_watch_cgm.csv')
+df_joined.to_csv('LUZ02_watch_cgm.csv')
 
 #print(df_joined.head(10))  
 print('joined data saved sucessfully')
